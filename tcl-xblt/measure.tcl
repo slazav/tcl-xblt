@@ -22,7 +22,7 @@ proc xblt::measure::add {graph args} {
 	-commandlabel lab usercmd
 	-event ev {}
 	-quickevent qev {}
-	-usemenu usemenu 0
+	-usemenu usemenu 1
 	-menulabel menulabel Measure
 	-finishlabel finlab {Finish measure}
     }

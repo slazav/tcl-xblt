@@ -18,7 +18,7 @@ proc xblt::readout::add {graph args} {
 	-command data($graph,cmd) {}
 	-interpolate data($graph,interp) no
 	-onmarkers data($graph,marks) {} 
-	-usemenu usemenu 0
+	-usemenu usemenu 1
 	-menulabel menulabel Readout
 	-formatcommand data($graph,fcmd) {}
 	-eventcommand eventcommand {}

@@ -15,7 +15,7 @@ proc xblt::crosshairs::add {graph args} {
     xblt::parse_options xblt::crosshairs::add $args {
 	-variable var {}
 	-show sh {}
-	-usemenu usemenu 0
+	-usemenu usemenu 1
 	-menulabel menulabel Crosshairs
     }
     set data($graph,var) $var
