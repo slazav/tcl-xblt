@@ -16,7 +16,7 @@ proc xblt::zoomstack::add {graph args} {
 	-axes axes {}
 	-recttype recttype xy
 	-rectconfig rectcfg {}
-	-usemenu usemenu 0
+	-usemenu usemenu 1
 	-menuunzoomlabel uzlab Unzoom
 	-menurezoomlabel rzlab {Restore zoom}
     }
