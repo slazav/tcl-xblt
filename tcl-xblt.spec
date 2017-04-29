@@ -4,6 +4,7 @@
 Name: tcl-%teaname
 Version: 3.0
 Release: alt1
+BuildArch: noarch
 
 Summary: tcl-xblt library from ROTA group
 Group: System/Libraries
@@ -19,8 +20,8 @@ tcl-xblt library from ROTA group
 %setup -q
 
 %build
-mkdir -p %buildroot/%_tcldatadir/%teaname
-install *.tcl %buildroot/%_tcldatadir/%teaname
+mkdir -p %buildroot/%_tcldatadir/%teaname%major
+install *.tcl %buildroot/%_tcldatadir/%teaname%major
 
 %files
 %dir %_tcldatadir/%teaname%major
