@@ -13,7 +13,7 @@ proc xblt::hielems {graph args} {
 proc xblt::hielems::add {graph args} {
     variable data
     xblt::parse_options xblt::hielems::add $args {
-      -usemenu usemenu 0
+      -usemenu usemenu 1
       -hidemenulabel  hideml  Hide
       -hilitmenulabel hilitml Highlight
       -logmenulabel   logml   Logscale
