@@ -20,4 +20,5 @@ package ifneeded xBlt 3.0 [list source [file join $dir main.tcl]]\n[list tclPkgS
     {zoomstack.tcl  source {xblt::zoomstack xblt::zoomstack::add}}
     {timemark.tcl   source {xblt::timemark::create}}
     {elemop.tcl     source {xblt::elemop}}
+    {scroll.tcl     source {xblt::scroll}}
 }]
