@@ -118,6 +118,19 @@ Options:
 
 ---
 
+### `xblt::xcomments <blt_graph> <options>` -- add/delete comments on the x-axis
+
+Comments are compatible with comments/annotations in graphene database.
+They can be created by Control-ButtonPress-1 and deleted by Control-ButtonPress-3.
+One can also add commands using `xblt::xcomments::create <position> <text>` call.
+Functions -on_add and -on_del can be used to syncronize comments with a database.
+
+Options:
+* -on_add  -- command run when a comment is created, arguments: position,text (default: {})
+* -on_del  -- command run when a comment is deleted, arguments: position,text (default: {})
+
+---
+
 TODO: other functions
 
 * bindtag.tcl

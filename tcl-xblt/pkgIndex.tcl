@@ -21,4 +21,5 @@ package ifneeded xBlt 3.0 [list source [file join $dir main.tcl]]\n[list tclPkgS
     {timemark.tcl   source {xblt::timemark::create}}
     {elemop.tcl     source {xblt::elemop}}
     {scroll.tcl     source {xblt::scroll}}
+    {xcomments.tcl  source {xblt::xcomments xblt::xcomments::create}}
 }]
