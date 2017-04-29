@@ -12,7 +12,7 @@ proc xblt::zoomstack::add {graph args} {
 	-modifier mod {}
 	-button button1 1
 	-unzoombutton button2 3
-	-scrollbutton button3 {}
+	-scrollbutton button3 2
 	-axes axes {}
 	-recttype recttype xy
 	-rectconfig rectcfg {}
