@@ -5,7 +5,11 @@ namespace eval xblt::scroll {
   variable scrollbar
 }
 
-proc xblt::scroll {graph sbar args} {
+proc xblt::scroll {graph args} {
+    eval xblt::scroll::add $graph $args
+}
+
+proc xblt::scroll::add {graph sbar args} {
   set xblt::scroll::blt_plot  $graph
   set xblt::scroll::scrollbar $sbar
   $xblt::scroll::scrollbar configure -orient horizontal -command "xblt::scroll::cmd"
