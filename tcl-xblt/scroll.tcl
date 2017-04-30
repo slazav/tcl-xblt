@@ -1,8 +1,11 @@
 # connects a scrollbar with a blt graph
 
 namespace eval xblt::scroll {
-  variable blt_plot
+  variable graph
   variable scrollbar
+  variable on_change
+  variable oldx1
+  variable oldx2
 }
 
 proc xblt::scroll {graph args} {
@@ -10,10 +13,16 @@ proc xblt::scroll {graph args} {
 }
 
 proc xblt::scroll::add {graph sbar args} {
-  set xblt::scroll::blt_plot  $graph
+  xblt::parse_options xblt::scroll::add $args [subst {
+    -on_change xblt::scroll::on_change {}
+  }]
+
+  set xblt::scroll::oldx1  0
+  set xblt::scroll::oldx2  0
+  set xblt::scroll::graph  $graph
   set xblt::scroll::scrollbar $sbar
   $xblt::scroll::scrollbar configure -orient horizontal -command "xblt::scroll::cmd"
-  $xblt::scroll::blt_plot  axis configure x -scrollcommand "xblt::scroll::sset"
+  $xblt::scroll::graph  axis configure x -scrollcommand "xblt::scroll::sset"
 
   bind . <Key-End>   "xblt::scroll::cmd moveto 1"
   bind . <Key-Home>  "xblt::scroll::cmd moveto 0"
@@ -26,13 +35,21 @@ proc xblt::scroll::add {graph sbar args} {
 }
 
 proc xblt::scroll::sset {x1 x2} {
+  if {$x1==$xblt::scroll::oldx1 && $x2==$xblt::scroll::oldx2} return
+  set xblt::scroll::oldx1 $x1
+  set xblt::scroll::oldx2 $x2
+  set cmd $xblt::scroll::on_change
+  if {$cmd != ""} {
+    set lims [$xblt::scroll::graph axis limits x]
+    uplevel \#0 [eval $cmd $x1 $x2 [lindex $lims 0] [lindex $lims 1]]
+  }
   $xblt::scroll::scrollbar set $x1 $x2
 }
 
 proc xblt::scroll::cmd {args} {
 
   ## blt plot limits
-  set xlim [$xblt::scroll::blt_plot axis limits x]
+  set xlim [$xblt::scroll::graph axis limits x]
   set xmin [lindex $xlim 0]
   set xmax [lindex $xlim 1]
 
@@ -62,6 +79,6 @@ proc xblt::scroll::cmd {args} {
   set k [expr {($xmax-$xmin)/($smax-$smin)}]
   set xmin [expr {$xmin + ($s-$smin)*$k}]
   set xmax [expr {$xmax + ($s-$smin)*$k}]
-  $xblt::scroll::blt_plot axis configure x -min $xmin -max $xmax
+  $xblt::scroll::graph axis configure x -min $xmin -max $xmax
 }
 

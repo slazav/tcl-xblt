@@ -54,6 +54,10 @@ for navigation are added:
 * Left/Right arrows, mouse wheel -- scroll left/right by 1/20 of the window.
 * PgUp/PgDown keys -- scroll left/right by one window size.
 
+Options:
+* -on_change  -- command run when the plot is scrolled or resized. Four arguments:
+  limits in scrollbar coordinates, limits in plot coordinates. (default: {})
+
 ---
 
 ### `xblt::zoomstack <blt_graph> <options>` -- zoom data with a mouse
