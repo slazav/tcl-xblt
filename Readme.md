@@ -57,6 +57,8 @@ for navigation are added:
 Options:
 * -on_change  -- command run when the plot is scrolled or resized. Four arguments:
   limits in scrollbar coordinates, limits in plot coordinates. (default: {})
+* -timefmt    -- use nice time libels on the x axis (values should be in
+  seconds since 1970-01-01). Boolean value. (default: 0)
 
 ---
 
