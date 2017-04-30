@@ -89,9 +89,9 @@ proc xblt::zoomstack::zoom {graph x1 x2 y1 y2} {
 	set a1 [$graph axis invtransform $a $lolim($d)]
 	set a2 [$graph axis invtransform $a $hilim($d)]
 	if {$a1 < $a2} {
-	    $graph axis configure $a -min $a1 -max $a2
+	    $graph axis configure $a -min $a1 -max $a2 -stepsize 0
 	} else {
-	    $graph axis configure $a -min $a2 -max $a1
+	    $graph axis configure $a -min $a2 -max $a1 -stepsize 0
 	}
     }
     #puts "zoom: {$s}"
@@ -103,7 +103,7 @@ proc xblt::zoomstack::zoom {graph x1 x2 y1 y2} {
 
 proc xblt::zoomstack::restore_limits {graph s} {
     foreach {a a1 a2} $s {
-	$graph axis configure $a -min $a1 -max $a2
+	$graph axis configure $a -min $a1 -max $a2 -stepsize 0
     }
 }
 
@@ -124,7 +124,7 @@ proc xblt::zoomstack::unzoom {graph} {
 	# scroll by drag can change limits even when stack is empty
 	# so we restore automatic axes limits
 	for_axes a $graph {
-	    $graph axis configure $a -min "" -max ""
+	    $graph axis configure $a -min "" -max "" -stepsize 0
 	}
     }
 }
