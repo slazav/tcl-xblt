@@ -57,8 +57,14 @@ proc xblt::scrollbydrag::do {graph x y} {
 		[lsearch -sorted $data($graph,axes) $a] < 0} continue
 	    set aa [$graph axis limits $a]
 	    set da [expr {[$graph axis invtransform $a $b0] - [$graph axis invtransform $a $b]}]
-	    $graph axis configure $a \
-		-min [expr {[lindex $aa 0] + $da}] -max [expr {[lindex $aa 1] + $da}]
+	    set amin [expr {[lindex $aa 0] + $da}]
+	    set amax [expr {[lindex $aa 1] + $da}]
+	    ## do not go beyond scrollmin:scrollmax
+	    set scmin [$graph axis cget $a -scrollmin]
+	    set scmax [$graph axis cget $a -scrollmax]
+	    if {$scmin != "" && $amin<$scmin} continue
+	    if {$scmax != "" && $amax>$scmax} continue
+	    $graph axis configure $a -min $amin -max $amax
 	}
     }
     set data($graph,x) $x
