@@ -71,9 +71,7 @@ proc xblt::zoomstack::get_limits {graph} {
     variable data
     set s {}
     for_axes a $graph {
-	set axmin [$graph axis cget $a -min]
-	set axmax [$graph axis cget $a -max]
-	lappend s $a $axmin $axmax
+	lappend s $a {*}[$graph axis limits $a]
     }
     return $s
 }
