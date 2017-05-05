@@ -26,14 +26,14 @@ proc xblt::scroll::add {graph sbar args} {
   $xblt::scroll::scrollbar configure -orient horizontal -command "xblt::scroll::cmd"
   $xblt::scroll::graph  axis configure x -scrollcommand "xblt::scroll::sset"
 
-  bind . <Key-End>   "xblt::scroll::cmd moveto 1"
-  bind . <Key-Home>  "xblt::scroll::cmd moveto 0"
-  bind . <Key-Left>  "xblt::scroll::cmd scroll -1 units"
-  bind . <Key-Right> "xblt::scroll::cmd scroll 1 units"
-  bind . <Key-Prior> "xblt::scroll::cmd scroll -1 pages"
-  bind . <Key-Next>  "xblt::scroll::cmd scroll 1 pages"
-  bind . <ButtonPress-4> "xblt::scroll::cmd scroll -1 units"
-  bind . <ButtonPress-5> "xblt::scroll::cmd scroll 1 units"
+  bind $graph <Key-End>   "xblt::scroll::cmd moveto 1"
+  bind $graph <Key-Home>  "xblt::scroll::cmd moveto 0"
+  bind $graph <Key-Left>  "xblt::scroll::cmd scroll -1 units"
+  bind $graph <Key-Right> "xblt::scroll::cmd scroll 1 units"
+  bind $graph <Key-Prior> "xblt::scroll::cmd scroll -1 pages"
+  bind $graph <Key-Next>  "xblt::scroll::cmd scroll 1 pages"
+  bind $graph <ButtonPress-4> "xblt::scroll::cmd scroll -1 units"
+  bind $graph <ButtonPress-5> "xblt::scroll::cmd scroll 1 units"
 }
 
 proc xblt::scroll::sset {x1 x2} {
