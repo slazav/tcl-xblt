@@ -122,7 +122,10 @@ proc xblt::zoomstack::unzoom {graph} {
 	# scroll by drag can change limits even when stack is empty
 	# so we restore automatic axes limits
 	for_axes a $graph {
-	    $graph axis configure $a -min "" -max "" -stepsize 0
+	    # use scrollmin/scrollmax settings or ""
+	    set min [$graph axis cget $a -scrollmin]
+	    set max [$graph axis cget $a -scrollmax]
+	    $graph axis configure $a -min $min -max $max -stepsize 0
 	}
     }
 }
