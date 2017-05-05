@@ -33,7 +33,7 @@ proc xblt::xcomments::create_int {graph x y X Y} {
   xblt::xcomments::create $graph $xx $text
 
   set cmd $xblt::xcomments::data($graph,on_add)
-  if {$cmd != ""} { uplevel \#0 [eval $cmd $xx $text] }
+  if {$cmd != ""} { uplevel \#0 [eval $cmd $xx [list $text]] }
   return -code break
 }
 
@@ -93,7 +93,7 @@ proc xblt::xcomments::delete {graph n} {
     set xx   $xblt::xcomments::scom($n,x0)
     set text $xblt::xcomments::scom($n,text)
     set cmd $xblt::xcomments::data($graph,on_del)
-    if {$cmd != ""} { uplevel \#0 [eval $cmd $xx $text] }
+    if {$cmd != ""} { uplevel \#0 [eval $cmd $xx [list $text]] }
 
     foreach m [array names xblt::xcomments::scom $n,*] {
       unset xblt::xcomments::scom($m)
@@ -105,6 +105,13 @@ proc xblt::xcomments::delete {graph n} {
     $graph marker configure $lm -outline black
   }
   return -code break
+}
+
+### delete all comments
+proc xblt::xcomments::clear {graph} {
+  foreach m [$graph marker names comm*_text] {$graph marker delete $m}
+  foreach m [$graph marker names comm*_line] {$graph marker delete $m}
+  foreach m [array names xblt::xcomments::scom *,*] {unset xblt::xcomments::scom($m)}
 }
 
 ### show a dialog window, ask for a comment text
