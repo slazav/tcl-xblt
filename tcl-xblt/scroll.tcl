@@ -76,6 +76,7 @@ proc xblt::scroll::cmd {args} {
   set slim [$xblt::scroll::scrollbar get]
   set smin [lindex $slim 0]
   set smax [lindex $slim 1]
+  if {$smax <= $smin} {return}
 
   set s $smin
   set sbw [expr $smax-$smin]
