@@ -36,6 +36,8 @@ proc xblt::scroll::add {graph sbar args} {
   bind $graph <ButtonPress-5> "xblt::scroll::cmd scroll 1 units"
 }
 
+## This function is called when graph is scrolled/zoomed.
+## It runs user command and moves scrollbar if it is needed.
 proc xblt::scroll::sset {x1 x2} {
   ## do only if range have been changed
   if {$x1==$xblt::scroll::oldx1 && $x2==$xblt::scroll::oldx2} return
@@ -66,6 +68,8 @@ proc xblt::scroll::sset {x1 x2} {
   $xblt::scroll::scrollbar set $x1 $x2
 }
 
+## This function is called when scrollbar is moved. It calculates
+## new graph limits and scroll the graph
 proc xblt::scroll::cmd {args} {
   ## blt plot limits
   set xlim [$xblt::scroll::graph axis limits x]
