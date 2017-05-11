@@ -17,6 +17,8 @@ proc xblt::xcomments::add {graph args} {
   set xblt::xcomments::scom(n) 0
   set xblt::xcomments::hidden false
   bind $graph <Control-ButtonPress-1> "xblt::xcomments::create_int $graph %x %y %X %Y"
+  # prevent zoomstack from using this button
+  bind $graph <Control-ButtonPress-3> break
   xblt::unitaxes::add $graph
 }
 
