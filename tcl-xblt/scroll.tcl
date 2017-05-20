@@ -7,6 +7,7 @@ namespace eval xblt::scroll {
   variable oldx1;     # Keep old limits during rescaling
   variable oldx2;     # to see if we need to do something.
   variable timefmt;   # x axis is time (unix time in seconds)
+  variable run_cmd_flag;   # do we need to run user command?
 }
 
 proc xblt::scroll {graph args} {
@@ -23,8 +24,9 @@ proc xblt::scroll::add {graph sbar args} {
   set xblt::scroll::oldx2  0
   set xblt::scroll::graph  $graph
   set xblt::scroll::scrollbar $sbar
+  set xblt::scroll::run_cmd_flag 0
   $xblt::scroll::scrollbar configure -orient horizontal -command "xblt::scroll::cmd"
-  $xblt::scroll::graph  axis configure x -scrollcommand "xblt::scroll::sset"
+  $xblt::scroll::graph axis configure x -scrollcommand "xblt::scroll::sset"
 
   bind $graph <Key-End>   "xblt::scroll::cmd moveto 1"
   bind $graph <Key-Home>  "xblt::scroll::cmd moveto 0"
@@ -36,13 +38,19 @@ proc xblt::scroll::add {graph sbar args} {
   bind $graph <ButtonPress-5> "xblt::scroll::cmd scroll 1 units"
 }
 
-## This function is called when graph is scrolled/zoomed.
-## It runs user command and moves scrollbar if it is needed.
+## This function is called when graph is scrolled/zoomed or scrollbar is moved.
+## It moves scrollbar and runs user command (for data updates) if needed.
 proc xblt::scroll::sset {x1 x2} {
+
   ## do only if range have been changed
   if {$x1==$xblt::scroll::oldx1 && $x2==$xblt::scroll::oldx2} return
   set xblt::scroll::oldx1 $x1
   set xblt::scroll::oldx2 $x2
+
+  $xblt::scroll::scrollbar set $x1 $x2
+
+  if {$xblt::scroll::run_cmd_flag > 0} return
+  incr xblt::scroll::run_cmd_flag
 
   ## limits in plot coordinates
   set lims [$xblt::scroll::graph axis limits x]
@@ -63,18 +71,14 @@ proc xblt::scroll::sset {x1 x2} {
   if {$cmd != ""} {
     uplevel \#0 [eval $cmd $x1 $x2 $xmin $xmax $w]
   }
+  set xblt::scroll::run_cmd_flag [expr "$xblt::scroll::run_cmd_flag - 1"]
 
-  ## update scrollbar
-  $xblt::scroll::scrollbar set $x1 $x2
 }
+
 
 ## This function is called when scrollbar is moved. It calculates
 ## new graph limits and scroll the graph
 proc xblt::scroll::cmd {args} {
-  ## blt plot limits
-  set xlim [$xblt::scroll::graph axis limits x]
-  set xmin [lindex $xlim 0]
-  set xmax [lindex $xlim 1]
 
   ## scrollbar limits
   set slim [$xblt::scroll::scrollbar get]
@@ -99,10 +103,16 @@ proc xblt::scroll::cmd {args} {
     }
   }
   if {$s > 1-$sbw} {set s [expr 1-$sbw]}
-  if {$s < 0} {set s $smin}
-  set k [expr {($xmax-$xmin)/($smax-$smin)}]
-  set xmin [expr {$xmin + ($s-$smin)*$k}]
-  set xmax [expr {$xmax + ($s-$smin)*$k}]
+  if {$s < 0} {set s 0}
+
+  ## blt plot limits
+  set xlim [$xblt::scroll::graph axis limits x]
+  set xmin [lindex $xlim 0]
+  set xmax [lindex $xlim 1]
+
+  set dx [expr {($s-$smin)*($xmax-$xmin)/($smax-$smin)}]
+  set xmin [expr {$xmin + $dx}]
+  set xmax [expr {$xmax + $dx}]
   $xblt::scroll::graph axis configure x -min $xmin -max $xmax
 }
 
