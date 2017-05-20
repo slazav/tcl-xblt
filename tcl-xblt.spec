@@ -21,7 +21,7 @@ tcl-xblt library from ROTA group
 
 %build
 mkdir -p %buildroot/%_tcldatadir/%teaname%major
-install *.tcl %buildroot/%_tcldatadir/%teaname%major
+install -m644 *.tcl %buildroot/%_tcldatadir/%teaname%major
 
 %files
 %dir %_tcldatadir/%teaname%major
