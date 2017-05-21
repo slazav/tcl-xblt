@@ -49,6 +49,8 @@ proc xblt::scroll::sset {x1 x2} {
 
   $xblt::scroll::scrollbar set $x1 $x2
 
+  ## we no not run set_tscale and user command
+  ## too ofter
   if {$xblt::scroll::run_cmd_flag > 0} return
   incr xblt::scroll::run_cmd_flag
 
@@ -68,11 +70,9 @@ proc xblt::scroll::sset {x1 x2} {
 
   ## run user command if needed
   set cmd $xblt::scroll::on_change
-  if {$cmd != ""} {
-    uplevel \#0 [eval $cmd $x1 $x2 $xmin $xmax $w]
-  }
+  if {$cmd != ""} { eval $cmd $x1 $x2 $xmin $xmax $w }
+  update idletasks
   set xblt::scroll::run_cmd_flag [expr "$xblt::scroll::run_cmd_flag - 1"]
-
 }
 
 
@@ -145,37 +145,31 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
   if {$SS > 60 } {
     $graph axis configure x -majorticks "" -stepsize 1 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
-    update idletasks
     return
   }
   if {10*$SS > 60 } {
     $graph axis configure x -majorticks "" -stepsize 10 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
-    update idletasks
     return
   }
   if {$MM > 60 } {
     $graph axis configure x -majorticks "" -subdivisions 6 -stepsize 60\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
-    update idletasks
     return
   }
   if {10*$MM > 60 } {
     $graph axis configure x -majorticks "" -stepsize 600 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
-    update idletasks
     return
   }
   if {$HH > 60 } {
     $graph axis configure x -majorticks "" -stepsize 3600 -subdivisions 6 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
-    update idletasks
     return
   }
   if {3*$HH > 60 } {
     $graph axis configure x -majorticks "" -loose 0 -stepsize 10800 -subdivisions 3 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
-    update idletasks
     return
   }
   if {$dd > 60 } {
@@ -189,7 +183,6 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
       lappend dl [expr $d]
     }
     $graph axis configure x -majorticks $dl -command "xblt::scroll::format_time {%Y-%m-%d}"
-    update idletasks
     return
   }
   if {$ww > 60 } {
@@ -205,7 +198,6 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
       lappend dl [expr $d]
     }
     $graph axis configure x -majorticks $dl -subdivisions 7 -command "xblt::scroll::format_time {%Y-%m-%d}"
-    update idletasks
     return
   }
   if {$mm > 60 } {
@@ -220,7 +212,6 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
       lappend dl [expr $d]
     }
     $graph axis configure x -majorticks $dl -subdivisions 31 -command "xblt::scroll::format_time {%Y-%m}"
-    update idletasks
     return
   }
   if {$yy > 60 } {
@@ -235,12 +226,10 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
       lappend dl [expr $d]
     }
     $graph axis configure x -majorticks $dl -subdivisions 12 -command "xblt::scroll::format_time %Y"
-    update idletasks
     return
   }
   $graph axis configure x -stepsize 0
   $graph axis configure x -subdivisions 0
-  update idletasks
 }
 
 
