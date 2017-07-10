@@ -37,6 +37,7 @@ have many plots with different scales on the graph.
 
 After a call to this function any plot can be dragged horizontally or vertically
 by 2nd mouse button. Axes are modified accordingly.
+This function is used in xblt::zoomstack to set up scrolling.
 
 Options:
 * -modifier -- modifier for dragging (default: {})
