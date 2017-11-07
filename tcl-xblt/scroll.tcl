@@ -142,6 +142,12 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
   set mm [expr {$dd*30}]
   set yy [expr {$dd*365}]
 
+  # when element is changing we should reset scales
+  foreach e [$graph element names] {
+    [$graph element cget $e -xdata] notify callback\
+       "$graph axis configure x -stepsize 0 -subdivisions 0"
+  }
+
   # when majorticks is set no minor ticks are allowed
   if {$SS > 60 } {
     $graph axis configure x -majorticks "" -stepsize 1 -subdivisions 10\
@@ -164,12 +170,12 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
     return
   }
   if {$HH > 60 } {
-    $graph axis configure x -majorticks "" -stepsize 3600 -subdivisions 6 -subdivisions 10\
+    $graph axis configure x -majorticks "" -stepsize 3600 -subdivisions 6\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
   if {3*$HH > 60 } {
-    $graph axis configure x -majorticks "" -loose 0 -stepsize 10800 -subdivisions 3 -subdivisions 10\
+    $graph axis configure x -majorticks "" -loose 0 -stepsize 10800 -subdivisions 3\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
@@ -229,8 +235,7 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
     $graph axis configure x -majorticks $dl -subdivisions 12 -command "xblt::scroll::format_time %Y"
     return
   }
-  $graph axis configure x -stepsize 0
-  $graph axis configure x -subdivisions 0
+  $graph axis configure x -stepsize 0 -subdivisions 0
 }
 
 
