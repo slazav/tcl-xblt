@@ -79,7 +79,7 @@ proc xblt::scroll::sset {graph x1 x2} {
 
 ## This function is called when scrollbar is moved. It calculates
 ## new graph limits and scroll the graph
-proc xblt::scroll::cmd {$graph args} {
+proc xblt::scroll::cmd {graph args} {
 
   ## scrollbar limits
   set slim [$xblt::scroll::data($graph,scrollbar) get]
