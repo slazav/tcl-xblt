@@ -62,7 +62,7 @@ proc xblt::xcomments::create {graph xx text} {
      -coords [list $xx 0 $xx 1]
   $graph marker bind $lm <Enter> [list comment_line_enter $graph $n]
   $graph marker bind $lm <Leave> [list comment_line_leave $graph $n]
-  $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete $graph $n]
+  $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete_int $graph $n]
 }
 proc comment_line_enter {graph n} {
   set tm "comm${n}_text"
@@ -82,31 +82,57 @@ proc comment_line_leave {graph n} {
 }
 
 
-### delete a comment
-proc xblt::xcomments::delete {graph n} {
+### delete a comment -- interactive version
+proc xblt::xcomments::delete_int {graph n} {
   if {$n == ""} return
 
   set tm "comm${n}_text"
   set lm "comm${n}_line"
 
-  $graph marker configure $tm -background red -foreground white -hide 0
-  $graph marker configure $lm -outline red
+  if {[$graph marker exists $tm]} {
+    $graph marker configure $tm -background red -foreground white -hide 0}
+  if {[$graph marker exists $lm]} {
+    $graph marker configure $lm -outline red}
   if {[tk_messageBox -type yesno -message "Delete comment?"] == "yes"} {
-    set xx   $xblt::xcomments::scom($n,x0)
-    set text $xblt::xcomments::scom($n,text)
-    set cmd $xblt::xcomments::data($graph,on_del)
-    if {$cmd != ""} { uplevel \#0 [eval $cmd $xx [list $text]] }
-
-    foreach m [array names xblt::xcomments::scom $n,*] {
-      unset xblt::xcomments::scom($m)
-    }
-    $graph marker delete $tm
-    $graph marker delete $lm
+    xblt::xcomments::delete $graph $n
   } else {
-    $graph marker configure $tm -background LightGoldenrodYellow -foreground black -hide 1
-    $graph marker configure $lm -outline black
+    if {[$graph marker exists $tm]} {
+      $graph marker configure $tm -background LightGoldenrodYellow -foreground black -hide 1}
+    if {[$graph marker exists $lm]} {
+      $graph marker configure $lm -outline black}
   }
   return -code break
+}
+
+### delete a comment
+proc xblt::xcomments::delete {graph n} {
+  if {$n == ""} return
+  set tm "comm${n}_text"
+  set lm "comm${n}_line"
+
+  set cmd $xblt::xcomments::data($graph,on_del)
+  if {$cmd != ""} {
+    set xx   $xblt::xcomments::scom($n,x0)
+    set text $xblt::xcomments::scom($n,text)
+    uplevel \#0 [eval $cmd $xx [list $text]]
+  }
+
+  foreach m [array names xblt::xcomments::scom $n,*] {
+      unset xblt::xcomments::scom($m) }
+  if {[$graph marker exists $tm]} {$graph marker delete $tm}
+  if {[$graph marker exists $lm]} {$graph marker delete $lm}
+  return
+}
+
+
+### delete old comments
+proc xblt::xcomments::delete_old {graph x0} {
+  foreach x [array names xblt::xcomments::scom *,x0] {
+    if {$xblt::xcomments::scom($x) < $x0} {
+       set n [lindex [split $x ,] 0]
+       xblt::xcomments::delete $graph $n
+    }
+  }
 }
 
 ### delete all comments
