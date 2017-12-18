@@ -29,14 +29,14 @@ proc xblt::scroll::add {graph sbar args} {
   $xblt::scroll::data($graph,scrollbar) configure -orient horizontal -command "xblt::scroll::cmd $graph"
   $graph axis configure x -scrollcommand "xblt::scroll::sset $graph"
 
-  bind $graph <Key-End>   "xblt::scroll::cmd moveto 1"
-  bind $graph <Key-Home>  "xblt::scroll::cmd moveto 0"
-  bind $graph <Key-Left>  "xblt::scroll::cmd scroll -1 units"
-  bind $graph <Key-Right> "xblt::scroll::cmd scroll 1 units"
-  bind $graph <Key-Prior> "xblt::scroll::cmd scroll -1 pages"
-  bind $graph <Key-Next>  "xblt::scroll::cmd scroll 1 pages"
-  bind $graph <ButtonPress-4> "xblt::scroll::cmd scroll -1 units"
-  bind $graph <ButtonPress-5> "xblt::scroll::cmd scroll 1 units"
+  bind $graph <Key-End>   "xblt::scroll::cmd $graph moveto 1"
+  bind $graph <Key-Home>  "xblt::scroll::cmd $graph moveto 0"
+  bind $graph <Key-Left>  "xblt::scroll::cmd $graph scroll -1 units"
+  bind $graph <Key-Right> "xblt::scroll::cmd $graph scroll 1 units"
+  bind $graph <Key-Prior> "xblt::scroll::cmd $graph scroll -1 pages"
+  bind $graph <Key-Next>  "xblt::scroll::cmd $graph scroll 1 pages"
+  bind $graph <ButtonPress-4> "xblt::scroll::cmd $graph scroll -1 units"
+  bind $graph <ButtonPress-5> "xblt::scroll::cmd $graph scroll 1 units"
 }
 
 ## This function is called when graph is scrolled/zoomed or scrollbar is moved.
