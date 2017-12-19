@@ -126,9 +126,10 @@ proc xblt::xcomments::delete {graph n} {
 
 
 ### delete old comments
-proc xblt::xcomments::delete_old {graph x0} {
+proc xblt::xcomments::delete_range {graph x1 x2} {
   foreach x [array names xblt::xcomments::scom *,x0] {
-    if {$xblt::xcomments::scom($x) < $x0} {
+    if {$xblt::xcomments::scom($x) > $x1 &&\
+        $xblt::xcomments::scom($x) < $x2} {
        set n [lindex [split $x ,] 0]
        xblt::xcomments::delete $graph $n
     }

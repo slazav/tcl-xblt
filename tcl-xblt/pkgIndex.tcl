@@ -21,5 +21,5 @@ package ifneeded xBlt 3.0 [list source [file join $dir main.tcl]]\n[list tclPkgS
     {timemark.tcl   source {xblt::timemark::create}}
     {elemop.tcl     source {xblt::elemop}}
     {scroll.tcl     source {xblt::scroll}}
-    {xcomments.tcl  source {xblt::xcomments xblt::xcomments::create xblt::xcomments::create_int xblt::xcomments::delete xblt::xcomments::delete_int xblt::xcomments::delete_old xblt::xcomments::clear}}
+    {xcomments.tcl  source {xblt::xcomments xblt::xcomments::create xblt::xcomments::create_int xblt::xcomments::delete xblt::xcomments::delete_int xblt::xcomments::delete_range xblt::xcomments::clear}}
 }]
