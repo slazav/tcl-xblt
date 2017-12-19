@@ -13,10 +13,12 @@ proc xblt::xcomments::add {graph args} {
   xblt::parse_options xblt::xcomments::add $args [subst {
     -on_add xblt::xcomments::data($graph,on_add) {}
     -on_del xblt::xcomments::data($graph,on_del) {}
+    -interactive  xblt::xcomments::data($graph,int) 1
     }]
   set xblt::xcomments::scom(n) 0
   set xblt::xcomments::hidden false
-  bind $graph <Control-ButtonPress-1> "xblt::xcomments::create_int $graph %x %y %X %Y"
+  if {$xblt::xcomments::data($graph,int)} {
+    bind $graph <Control-ButtonPress-1> "xblt::xcomments::create_int $graph %x %y %X %Y" }
   # prevent zoomstack from using this button
   bind $graph <Control-ButtonPress-3> break
   xblt::unitaxes::add $graph
@@ -62,7 +64,8 @@ proc xblt::xcomments::create {graph xx text} {
      -coords [list $xx 0 $xx 1]
   $graph marker bind $lm <Enter> [list comment_line_enter $graph $n]
   $graph marker bind $lm <Leave> [list comment_line_leave $graph $n]
-  $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete_int $graph $n]
+  if {$xblt::xcomments::data($graph,int)} {
+    $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete_int $graph $n] }
 }
 proc comment_line_enter {graph n} {
   set tm "comm${n}_text"
