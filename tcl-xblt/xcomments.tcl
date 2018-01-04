@@ -58,7 +58,7 @@ proc xblt::xcomments::create {graph xx text} {
      -justify left -anchor nw \
      -mapy xblt::unity -text $xblt::xcomments::scom($n,text)\
      -coords [list $xx 1]
-  $graph marker create line -name $lm -hide 0 \
+  $graph marker create line -name $lm -hide $xblt::xcomments::hidden \
      -mapy xblt::unity -outline black\
      -dashes 2 -linewidth 2\
      -coords [list $xx 0 $xx 1]
@@ -128,7 +128,7 @@ proc xblt::xcomments::delete {graph n} {
 }
 
 
-### delete old comments
+### delete comments in some time range
 proc xblt::xcomments::delete_range {graph x1 x2} {
   foreach x [array names xblt::xcomments::scom *,x0] {
     if {$xblt::xcomments::scom($x) > $x1 &&\
@@ -145,6 +145,20 @@ proc xblt::xcomments::clear {graph} {
   foreach m [$graph marker names comm*_line] {$graph marker delete $m}
   foreach m [array names xblt::xcomments::scom *,*] {unset xblt::xcomments::scom($m)}
 }
+
+### hide all comments
+proc xblt::xcomments::hide_all {graph} {
+  foreach m [$graph marker names comm*_text] {$graph marker configure $m -hide 1}
+  foreach m [$graph marker names comm*_line] {$graph marker configure $m -hide 1}
+  set $xblt::xcomments::hidden true
+}
+
+### show all comments
+proc xblt::xcomments::show_all {graph} {
+  foreach m [$graph marker names comm*_line] {$graph marker configure $m -hide 0}
+  set $xblt::xcomments::hidden false
+}
+
 
 ### show a dialog window, ask for a comment text
 proc xblt::xcomments::ask_text {old_text X Y} {
