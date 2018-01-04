@@ -61,7 +61,6 @@ proc xblt::scroll::sset {graph x1 x2} {
   if {$xblt::scroll::data($graph,run_cmd_flag) > 0} return
   incr xblt::scroll::data($graph,run_cmd_flag)
 
-
   # calculate size of plot area:
   set w [winfo width $graph]
   set w [expr {$w-140}];  # not accurate, we do not know size of legend + vertical axis
@@ -136,33 +135,35 @@ proc xblt::scroll::format_time {fmt p t} {
 ## set time scale
 proc xblt::scroll::set_tscale {graph xmin xmax w} {
 
-  set SS [expr {$w/($xmax - $xmin)}]
-  set MM [expr {$SS*60}]
-  set HH [expr {$MM*60}]
-  set dd [expr {$HH*24}]
-  set ww [expr {$dd*7}]
-  set mm [expr {$dd*30}]
-  set yy [expr {$dd*365}]
 
   # when element is changing we should reset scales
-  foreach e [$graph element names] {
-    [$graph element cget $e -xdata] notify callback\
-       "$graph axis configure x -stepsize 0 -subdivisions 0"
-  }
+#  foreach e [$graph element names] {
+#    [$graph element cget $e -xdata] notify callback\
+#       "$graph axis configure x -stepsize 0 -subdivisions 0"
+#  }
 
   # when majorticks is set no minor ticks are allowed
+  set SS [expr {$w/($xmax - $xmin)}]
   if {$SS > 60 } {
-    $graph axis configure x -majorticks "" -stepsize 1 -subdivisions 10\
-                            -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
+    set dl {}
+    for {set d [expr {int($xmin)}]} {$d < $xmax} {set d [expr $d+1]} {
+      lappend dl $d}
+    $graph axis configure x -majorticks $dl -subdivisions 10\
+       -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
     return
+
+#    $graph axis configure x -majorticks "" -stepsize 1 -subdivisions 10\
+#                            -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
+#    return
   }
   if {10*$SS > 60 } {
     $graph axis configure x -majorticks "" -stepsize 10 -subdivisions 10\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
     return
   }
+  set MM [expr {$SS*60}]
   if {$MM > 60 } {
-    $graph axis configure x -majorticks "" -subdivisions 6 -stepsize 60\
+    $graph axis configure x -majorticks "" -stepsize 60 -subdivisions 6\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
@@ -171,16 +172,18 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
+  set HH [expr {$MM*60}]
   if {$HH > 60 } {
     $graph axis configure x -majorticks "" -stepsize 3600 -subdivisions 6\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
   if {3*$HH > 60 } {
-    $graph axis configure x -majorticks "" -loose 0 -stepsize 10800 -subdivisions 3\
+    $graph axis configure x -majorticks "" -stepsize 10800 -subdivisions 3\
                             -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M}"
     return
   }
+  set dd [expr {$HH*24}]
   if {$dd > 60 } {
     # build list with days. We can not use -stepsize 86400
     # because of local time shift
@@ -194,6 +197,7 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
     $graph axis configure x -majorticks $dl -command "xblt::scroll::format_time {%Y-%m-%d}"
     return
   }
+  set ww [expr {$dd*7}]
   if {$ww > 60 } {
     # build list with weeks. We can not use -stepsize [expr {7*86400}]
     # because of local time shift
@@ -209,6 +213,7 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
     $graph axis configure x -majorticks $dl -subdivisions 7 -command "xblt::scroll::format_time {%Y-%m-%d}"
     return
   }
+  set mm [expr {$dd*30}]
   if {$mm > 60 } {
     # build list of months
     set d [clock format [expr {int($xmin)}] -format "%Y-%m"]
@@ -223,6 +228,7 @@ proc xblt::scroll::set_tscale {graph xmin xmax w} {
     $graph axis configure x -majorticks $dl -subdivisions 31 -command "xblt::scroll::format_time {%Y-%m}"
     return
   }
+  set yy [expr {$dd*365}]
   if {$yy > 60 } {
     # build list of years
     set d [clock format [expr {int($xmin)}] -format "%Y"]
