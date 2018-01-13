@@ -29,7 +29,7 @@ Options:
 After a call to this function any plot can be selected with a middle
 mouse button and scaled or moved in a vertical direction by dragging the
 mouse. Vertical axis is modified accordingly. This is convenient if you
-have many plots with different scales on the graph.
+have many plots with different y scales on the graph.
 
 ---
 
@@ -127,14 +127,22 @@ Options:
 
 ### `xblt::xcomments <blt_graph> <options>` -- add/delete comments on the x-axis
 
+This function adds editable comments with vertical lines.
 Comments are compatible with comments/annotations in graphene database.
 They can be created by Control-ButtonPress-1 and deleted by Control-ButtonPress-3.
-One can also add commands using `xblt::xcomments::create <position> <text>` call.
-Functions -on_add and -on_del can be used to syncronize comments with a database.
 
 Options:
 * -on_add  -- command run when a comment is created, arguments: position,text (default: {})
 * -on_del  -- command run when a comment is deleted, arguments: position,text (default: {})
+Functions -on_add and -on_del can be used to syncronize comments with a database.
+
+Functions:
+* `xblt::xcomments::create <graph> <position> <text>` - create a comment, return its id`
+* `xblt::xcomments::delete <graph> <id> -- delete a comment`
+* `xblt::xcomments::clear <graph> -- delete all comments`
+* `xblt::xcomments::delete_range <graph> <x1> <x2> -- delete all comments in the range`
+* `xblt::xcomments::hide_all <graph> -- hide all comments`
+* `xblt::xcomments::show_all <graph> -- show all comments`
 
 ---
 

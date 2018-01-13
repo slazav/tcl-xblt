@@ -1,3 +1,8 @@
+#############################################################
+# This function adds editable comments with vertical lines.
+# Comments are compatible with comments/annotations in graphene database.
+#They can be created by Control-ButtonPress-1 and deleted by Control-ButtonPress-3.
+
 namespace eval xblt::xcomments {
   variable scom
   variable hidden
@@ -24,6 +29,7 @@ proc xblt::xcomments::add {graph args} {
   xblt::unitaxes::add $graph
 }
 
+#############################################################
 ### create a comment -- interactive version
 proc xblt::xcomments::create_int {graph x y X Y} {
   if {$xblt::xcomments::hidden} {return -code break}
@@ -41,8 +47,32 @@ proc xblt::xcomments::create_int {graph x y X Y} {
   return -code break
 }
 
-### create a comment
-proc xblt::xcomments::create {graph xx text} {
+#############################################################
+### delete a comment -- interactive version
+proc xblt::xcomments::delete_int {graph n} {
+  if {$n == ""} return
+
+  set tm "comm${n}_text"
+  set lm "comm${n}_line"
+
+  if {[$graph marker exists $tm]} {
+    $graph marker configure $tm -background red -foreground white -hide 0}
+  if {[$graph marker exists $lm]} {
+    $graph marker configure $lm -outline red}
+  if {[tk_messageBox -type yesno -message "Delete comment?"] == "yes"} {
+    xblt::xcomments::delete $graph $n
+  } else {
+    if {[$graph marker exists $tm]} {
+      $graph marker configure $tm -background LightGoldenrodYellow -foreground black -hide 1}
+    if {[$graph marker exists $lm]} {
+      $graph marker configure $lm -outline black}
+  }
+  return -code break
+}
+
+#############################################################
+### create a comment, return comment ID
+proc xblt::xcomments::create {graph x text} {
   ## create comment data
   set n $xblt::xcomments::scom(n)
   incr xblt::xcomments::scom(n)
@@ -66,7 +96,11 @@ proc xblt::xcomments::create {graph xx text} {
   $graph marker bind $lm <Leave> [list comment_line_leave $graph $n]
   if {$xblt::xcomments::data($graph,int)} {
     $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete_int $graph $n] }
+  return $n
 }
+
+#############################################################
+### <Enter>/<Leave> bindings for the comment line
 proc comment_line_enter {graph n} {
   set tm "comm${n}_text"
   set lm "comm${n}_line"
@@ -84,29 +118,7 @@ proc comment_line_leave {graph n} {
   return -code break
 }
 
-
-### delete a comment -- interactive version
-proc xblt::xcomments::delete_int {graph n} {
-  if {$n == ""} return
-
-  set tm "comm${n}_text"
-  set lm "comm${n}_line"
-
-  if {[$graph marker exists $tm]} {
-    $graph marker configure $tm -background red -foreground white -hide 0}
-  if {[$graph marker exists $lm]} {
-    $graph marker configure $lm -outline red}
-  if {[tk_messageBox -type yesno -message "Delete comment?"] == "yes"} {
-    xblt::xcomments::delete $graph $n
-  } else {
-    if {[$graph marker exists $tm]} {
-      $graph marker configure $tm -background LightGoldenrodYellow -foreground black -hide 1}
-    if {[$graph marker exists $lm]} {
-      $graph marker configure $lm -outline black}
-  }
-  return -code break
-}
-
+#############################################################
 ### delete a comment
 proc xblt::xcomments::delete {graph n} {
   if {$n == ""} return
@@ -127,7 +139,7 @@ proc xblt::xcomments::delete {graph n} {
   return
 }
 
-
+#############################################################
 ### delete comments in some time range
 proc xblt::xcomments::delete_range {graph x1 x2} {
   foreach x [array names xblt::xcomments::scom *,x0] {
@@ -139,6 +151,7 @@ proc xblt::xcomments::delete_range {graph x1 x2} {
   }
 }
 
+#############################################################
 ### delete all comments
 proc xblt::xcomments::clear {graph} {
   foreach m [$graph marker names comm*_text] {$graph marker delete $m}
@@ -146,6 +159,7 @@ proc xblt::xcomments::clear {graph} {
   foreach m [array names xblt::xcomments::scom *,*] {unset xblt::xcomments::scom($m)}
 }
 
+#############################################################
 ### hide all comments
 proc xblt::xcomments::hide_all {graph} {
   foreach m [$graph marker names comm*_text] {$graph marker configure $m -hide 1}
@@ -153,6 +167,7 @@ proc xblt::xcomments::hide_all {graph} {
   set $xblt::xcomments::hidden true
 }
 
+#############################################################
 ### show all comments
 proc xblt::xcomments::show_all {graph} {
   foreach m [$graph marker names comm*_line] {$graph marker configure $m -hide 0}
@@ -160,6 +175,7 @@ proc xblt::xcomments::show_all {graph} {
 }
 
 
+#############################################################
 ### show a dialog window, ask for a comment text
 proc xblt::xcomments::ask_text {old_text X Y} {
   set xblt::xcomments::dlg_res {}
@@ -200,3 +216,4 @@ proc xblt::xcomments::ask_text {old_text X Y} {
   }
 }
 
+#############################################################
