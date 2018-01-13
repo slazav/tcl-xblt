@@ -16,8 +16,15 @@ proc xblt::plotoperation::register {graph name args} {
     set tag xblt::plotoper:$name
     bind $tag <Key-Escape> [list xblt::plotoperation::cancel %W $name]\nbreak
 
+    # menu name
+    set mn "$graph.plotoper_$name"
+
+    # destroy old menu (in case of second call with the same name)
+    if {[winfo exists $mn]} {destroy $mn}
+
+    # create new menu
     if {$usemenu} {
-	set m [menu $graph.plotoper_$name -tearoff no]
+	set m [menu $mn -tearoff no]
 	if {$lab ne ""} {
 	    $m add command -label $lab -command \
 		[list xblt::plotoperation::cancel $graph $name]
