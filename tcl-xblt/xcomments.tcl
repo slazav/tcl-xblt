@@ -72,7 +72,7 @@ proc xblt::xcomments::delete_int {graph n} {
 
 #############################################################
 ### create a comment, return comment ID
-proc xblt::xcomments::create {graph x text} {
+proc xblt::xcomments::create {graph xx text} {
   ## create comment data
   set n $xblt::xcomments::scom(n)
   incr xblt::xcomments::scom(n)

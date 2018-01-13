@@ -1,4 +1,4 @@
-package provide xBlt 3.0
+package provide xBlt 3.1
 
 package require BLT 2.4
 
