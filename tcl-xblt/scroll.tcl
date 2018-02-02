@@ -29,6 +29,12 @@ proc xblt::scroll::add {graph sbar args} {
   $xblt::scroll::data($graph,scrollbar) configure -orient horizontal -command "xblt::scroll::cmd $graph"
   $graph axis configure x -scrollcommand "xblt::scroll::sset $graph"
 
+  if {$xblt::scroll::data($graph,timefmt)} {
+    $graph axis configure x -majorticks "" -stepsize 0 -subdivisions 10\
+        -command "xblt::scroll::format_time {%Y-%m-%d%n%H:%M:%S}"
+  }
+
+
   bind $graph <Key-End>   "xblt::scroll::cmd $graph moveto 1"
   bind $graph <Key-Home>  "xblt::scroll::cmd $graph moveto 0"
   bind $graph <Key-Left>  "xblt::scroll::cmd $graph scroll -1 units"
@@ -65,11 +71,10 @@ proc xblt::scroll::sset {graph x1 x2} {
   set w [winfo width $graph]
   set w [expr {$w-140}];  # not accurate, we do not know size of legend + vertical axis
 
-
-  ## format time axis if needed
-  if {$xblt::scroll::data($graph,timefmt)} {
-    xblt::scroll::set_tscale $graph $xmin $xmax $w
-  }
+#  ## format time axis if needed
+#  if {$xblt::scroll::data($graph,timefmt)} {
+#    xblt::scroll::set_tscale $graph $xmin $xmax $w
+#  }
 
   ## run user command if needed
   set cmd $xblt::scroll::data($graph,on_change)
@@ -134,13 +139,6 @@ proc xblt::scroll::format_time {fmt p t} {
 
 ## set time scale
 proc xblt::scroll::set_tscale {graph xmin xmax w} {
-
-
-  # when element is changing we should reset scales
-#  foreach e [$graph element names] {
-#    [$graph element cget $e -xdata] notify callback\
-#       "$graph axis configure x -stepsize 0 -subdivisions 0"
-#  }
 
   # when majorticks is set no minor ticks are allowed
   set SS [expr {$w/($xmax - $xmin)}]
