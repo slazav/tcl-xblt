@@ -65,6 +65,8 @@ y2d expr cos(xd)
 
 .p element create d -xdata xd -ydata yd -symbol {} -color blue
 .p element create d2 -xdata xd -ydata y2d -symbol {} -color red
+.p xaxis configure -title x-axis
+.p yaxis configure -title y-axis
 
 xblt::readout::set_axis_format .p x "%.3f rad"
 xblt::readout::set_element_format .p d2 "%.4f cm"
