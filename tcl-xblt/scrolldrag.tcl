@@ -64,6 +64,9 @@ proc xblt::scrollbydrag::do {graph x y} {
 	    set scmax [$graph axis cget $a -scrollmax]
 	    if {$scmin != "" && $amin<$scmin} continue
 	    if {$scmax != "" && $amax>$scmax} continue
+	    ## do not go below zero in log scale
+	    if {[$graph axis cget $a -logscale] && $amin<=0} continue
+	    ## apply limits
 	    $graph axis configure $a -min $amin -max $amax
 	}
     }
