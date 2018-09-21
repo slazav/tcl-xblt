@@ -1,7 +1,7 @@
 #############################################################
 # This function adds editable comments with vertical lines.
 # Comments are compatible with comments/annotations in graphene database.
-#They can be created by Control-ButtonPress-1 and deleted by Control-ButtonPress-3.
+# They can be created by Control-ButtonPress-1 and deleted by Control-ButtonPress-3.
 
 namespace eval xblt::xcomments {
   variable scom
@@ -19,6 +19,8 @@ proc xblt::xcomments::add {graph args} {
     -on_add xblt::xcomments::data($graph,on_add) {}
     -on_del xblt::xcomments::data($graph,on_del) {}
     -interactive  xblt::xcomments::data($graph,int) 1
+    -show_x       xblt::xcomments::data($graph,showx) 0
+    -time_fmt     xblt::xcomments::data($graph,tfmt) {Y-%d-%m %H:%M:%S}
     }]
   set xblt::xcomments::scom(n) 0
   set xblt::xcomments::hidden false
@@ -73,11 +75,26 @@ proc xblt::xcomments::delete_int {graph n} {
 #############################################################
 ### create a comment, return comment ID
 proc xblt::xcomments::create {graph xx text} {
+
+  ## If show_x option is set, add x coordinate to the
+  ## comment text; If time_fmt option is not empty,
+  ## use clock format to display x.
+  if {$xblt::xcomments::data($graph,showx)} {
+    set xv $xx
+    set fmt $xblt::xcomments::data($graph,tfmt)
+    if {$fmt != {}} {
+      set xi [expr {int($xx)}]
+      set xv [clock format $xi -format $fmt]
+    }
+    set text "$xv\n$text"
+  }
+
   ## create comment data
   set n $xblt::xcomments::scom(n)
   incr xblt::xcomments::scom(n)
   set xblt::xcomments::scom($n,text) $text
   set xblt::xcomments::scom($n,x0)  $xx
+
 
   ## create comment markers
   set tm "comm${n}_text"
