@@ -15,16 +15,17 @@ proc xblt::xcomments {graph args} {
 }
 
 proc xblt::xcomments::add {graph args} {
+  variable data
   xblt::parse_options xblt::xcomments::add $args [subst {
-    -on_add xblt::xcomments::data($graph,on_add) {}
-    -on_del xblt::xcomments::data($graph,on_del) {}
-    -interactive  xblt::xcomments::data($graph,int) 1
-    -show_x       xblt::xcomments::data($graph,showx) 0
-    -time_fmt     xblt::xcomments::data($graph,tfmt) {Y-%d-%m %H:%M:%S}
+    -on_add data($graph,on_add) {}
+    -on_del data($graph,on_del) {}
+    -interactive  data($graph,int) 1
+    -show_x       data($graph,showx) 0
+    -time_fmt     data($graph,tfmt) {Y-%d-%m %H:%M:%S}
     }]
   set xblt::xcomments::scom(n) 0
   set xblt::xcomments::hidden false
-  if {$xblt::xcomments::data($graph,int)} {
+  if {$data($graph,int)} {
     bind $graph <Control-ButtonPress-1> "xblt::xcomments::create_int $graph %x %y %X %Y" }
   # prevent zoomstack from using this button
   bind $graph <Control-ButtonPress-3> break
@@ -34,6 +35,7 @@ proc xblt::xcomments::add {graph args} {
 #############################################################
 ### create a comment -- interactive version
 proc xblt::xcomments::create_int {graph x y X Y} {
+  variable data
   if {$xblt::xcomments::hidden} {return -code break}
 
   ## ask for a comment text
@@ -44,7 +46,7 @@ proc xblt::xcomments::create_int {graph x y X Y} {
   set xx [$graph axis invtransform x $x]
   xblt::xcomments::create $graph $xx $text
 
-  set cmd $xblt::xcomments::data($graph,on_add)
+  set cmd $data($graph,on_add)
   if {$cmd != ""} { uplevel \#0 [eval $cmd $xx [list $text]] }
   return -code break
 }
@@ -75,13 +77,14 @@ proc xblt::xcomments::delete_int {graph n} {
 #############################################################
 ### create a comment, return comment ID
 proc xblt::xcomments::create {graph xx text} {
+  variable data
 
   ## If show_x option is set, add x coordinate to the
   ## comment text; If time_fmt option is not empty,
   ## use clock format to display x.
-  if {$xblt::xcomments::data($graph,showx)} {
+  if {$data($graph,showx)} {
     set xv $xx
-    set fmt $xblt::xcomments::data($graph,tfmt)
+    set fmt $data($graph,tfmt)
     if {$fmt != {}} {
       set xi [expr {int($xx)}]
       set xv [clock format $xi -format $fmt]
@@ -111,7 +114,7 @@ proc xblt::xcomments::create {graph xx text} {
      -coords [list $xx 0 $xx 1]
   $graph marker bind $lm <Enter> [list comment_line_enter $graph $n]
   $graph marker bind $lm <Leave> [list comment_line_leave $graph $n]
-  if {$xblt::xcomments::data($graph,int)} {
+  if {$data($graph,int)} {
     $graph marker bind $lm <Control-ButtonPress-3> [list xblt::xcomments::delete_int $graph $n] }
   return $n
 }
@@ -138,11 +141,12 @@ proc comment_line_leave {graph n} {
 #############################################################
 ### delete a comment
 proc xblt::xcomments::delete {graph n} {
+  variable data
   if {$n == ""} return
   set tm "comm${n}_text"
   set lm "comm${n}_line"
 
-  set cmd $xblt::xcomments::data($graph,on_del)
+  set cmd $data($graph,on_del)
   if {$cmd != ""} {
     set xx   $xblt::xcomments::scom($n,x0)
     set text $xblt::xcomments::scom($n,text)
@@ -195,23 +199,24 @@ proc xblt::xcomments::show_all {graph} {
 #############################################################
 ### show a dialog window, ask for a comment text
 proc xblt::xcomments::ask_text {old_text X Y} {
-  set xblt::xcomments::dlg_res {}
+  variable dlg_res
+  set dlg_res {}
   set w .cominput
   if {![winfo exists $w]} {
     toplevel $w
 
     text $w.t -background white -width 40 -height 6 -font {helvetica 12}
-    bind $w.t <Alt-Key-Return> {set xblt::xcomments::dlg_res 1 ; break}
-    bind $w.t <Key-Escape> {set xblt::xcomments::dlg_res 0 ; break}
+    bind $w.t <Alt-Key-Return> {set dlg_res 1 ; break}
+    bind $w.t <Key-Escape> {set dlg_res 0 ; break}
 
-    button $w.ok -text OK -width 7 -command {set xblt::xcomments::dlg_res 1}
-    button $w.can -text Cancel -width 7 -command {set xblt::xcomments::dlg_res 0}
+    button $w.ok -text OK -width 7 -command {set dlg_res 1}
+    button $w.can -text Cancel -width 7 -command {set dlg_res 0}
 
     grid $w.t -columnspan 2 -padx 2 -pady 2
     grid $w.ok $w.can -sticky e -padx 5 -pady 2
 
     wm transient $w .
-    wm protocol $w WM_DELETE_WINDOW {set xblt::xcomments::dlg_res 0}
+    wm protocol $w WM_DELETE_WINDOW {set dlg_res 0}
     wm title $w "Create comment"
   }
   wm geometry $w +$X+$Y
@@ -226,7 +231,7 @@ proc xblt::xcomments::ask_text {old_text X Y} {
   grab release $w
   wm state $w withdrawn
 
-  if {$xblt::xcomments::dlg_res == 0} {
+  if {$dlg_res == 0} {
     return $old_text
   } else {
     return [string trim [$w.t get 1.0 end]]
