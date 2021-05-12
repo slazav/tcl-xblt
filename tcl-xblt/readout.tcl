@@ -124,12 +124,7 @@ proc xblt::readout::format {graph axdir ename eval {ax ""}} {
     }
     set axcmd [$graph axis cget $ax -command]
     if {$axcmd ne ""} {
-	set astr [eval $axcmd $graph $eval]
-	if {$str ne ""} {
-	    set str "$astr ($str)"
-	} else {
-	    set str $astr
-	}
+      set str [eval $axcmd $graph $eval]
     }
     return $str
 }
