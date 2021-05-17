@@ -13,7 +13,7 @@ proc xblt::plotoperation::register {graph name args} {
 	-cursor data($graph,$name,cursor) {}
 	-bindtag data($graph,$name,tag) {}
     }]
-    set tag xblt::plotoper:$name
+    set tag xblt::plotoper:$graph:$name
     bind $tag <Key-Escape> [list xblt::plotoperation::cancel %W $name]\nbreak
 
     # menu name
@@ -40,7 +40,7 @@ proc xblt::plotoperation::register {graph name args} {
 
 proc xblt::plotoperation::activate {graph name} {
     variable data
-    xblt::bindtag::add $graph xblt::plotoper:$name
+    xblt::bindtag::add $graph xblt::plotoper:$graph:$name
     if {$data($graph,$name,tag) ne ""} {
 	xblt::bindtag::add $graph $data($graph,$name,tag)
     }
@@ -56,7 +56,7 @@ proc xblt::plotoperation::cancel {graph name} {
     if {$data($graph,$name,tag) ne ""} {
 	xblt::bindtag::remove $graph $data($graph,$name,tag)
     }
-    xblt::bindtag::remove $graph xblt::plotoper:$name
+    xblt::bindtag::remove $graph xblt::plotoper:$graph:$name
     if {[info exist data($graph,$name,ocursor)]} {
 	$graph configure -cursor $data($graph,$name,ocursor)
     }
@@ -87,5 +87,5 @@ proc xblt::plotoperation::get_menu {graph name} {
 }
 
 proc xblt::plotoperation::is_active {graph name} {
-    xblt::bindtag::check $graph xblt::plotoper:$name
+    xblt::bindtag::check $graph xblt::plotoper:$graph:$name
 }
