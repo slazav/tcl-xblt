@@ -110,6 +110,12 @@ proc xblt::readout::format {graph axdir ename eval {ax ""}} {
     if {$ax eq ""} {
 	set ax [$graph element cget $ename -map$axdir]
     }
+
+    set axcmd [$graph axis cget $ax -command]
+    if {$axcmd ne ""} {
+      return [eval $axcmd $graph $eval]
+    }
+
     if {[info exist data($graph,efmt$axdir,$ename)]} {
 	set fmt $data($graph,efmt$axdir,$ename)
     } elseif {[info exist data($graph,axfmt,$ax)]} {
@@ -118,15 +124,9 @@ proc xblt::readout::format {graph axdir ename eval {ax ""}} {
 	set fmt %.6g
     }
     if {$fmt ne ""} {
-	set str [::format $fmt $eval]
-    } else {
-	set str ""
+	return [::format $fmt $eval]
     }
-    set axcmd [$graph axis cget $ax -command]
-    if {$axcmd ne ""} {
-      set str [eval $axcmd $graph $eval]
-    }
-    return $str
+    return ""
 }
 
 proc xblt::readout::set_axis_format {graph ax fmt} {
