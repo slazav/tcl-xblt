@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+DESTDIR=debian/package
+datadir=$(DESTDIR)/usr/share/tcltk/tcl8.6/xblt3.2
+
+binary-indep:
+	$(checkdir)
+	$(checkroot)
+
+	install -d $(datadir)
+	install -m644 tcl-xblt/*.tcl -t $(datadir)
+
+	# Install Program Resources
+	mkdir $(DESTDIR)/DEBIAN
+	dpkg-gencontrol -P$(DESTDIR)
+	cd $(DESTDIR) && find . -type f ! -regex '.*DEBIAN/.*' -printf '%P\0' | xargs -r0 md5sum > DEBIAN/md5sums
+	dpkg-deb -b $(DESTDIR) ../
+
+.PHONY: binary binary-arch binary-indep clean build
