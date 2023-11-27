@@ -2,7 +2,7 @@ Source: tcl-xblt
 Section: System
 Priority: optional
 Maintainer: Vladislav Zavjalov <vl.zavjalov@gmail.com>
-Standards-Version: ${ver}
+Standards-Version: 4.0.0
 
 Package: tcl-xblt
 Architecture: all
